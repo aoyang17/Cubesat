@@ -1,0 +1,126 @@
+
+ ==============================
+ S N O P T  7.2-5    (May 2007)
+ ==============================
+ 
+ SNMEMB EXIT 100 -- finished successfully
+ SNMEMB INFO 104 -- memory requirements estimated
+
+ ==============================
+ S N O P T  7.2-5    (May 2007)
+ ==============================
+ 
+ 
+
+ Nonlinear constraints       3     Linear constraints    9006
+ Nonlinear variables      2703     Linear variables         0
+ Jacobian  variables      2703     Objective variables   2703
+ Total constraints        9009     Total variables       2703
+ 
+
+ 
+ The user has defined    2700   out of    2700   constraint gradients.
+ The user has defined    2703   out of    2703   objective  gradients.
+ 
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective
+          100  1.6E+01                           3.4582454E+03
+          200  1.1E+01                           3.4570258E+03
+          300 -1.0E+01                  1.8E-15  3.0810294E+03    39
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     0    360               1 (0.0E+00) 5.1E+00  3.4598793E+03    99           r  T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100 -7.1E+00                  3.9E-31  1.9748733E+03   194
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     1    104  9.5E-09     11 (0.0E+00) 5.1E+00  3.4598482E+03   198         n r  T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100 -4.1E+01                  2.9E-16  3.4620585E+03   296
+          200 -3.7E+01                  4.8E-16  3.4604338E+03   396
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     2    267  1.2E-08     21 (0.0E+00) 5.1E+00  3.4597984E+03   463         s    T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100 -2.3E+00                  2.4E-17  2.9304422E+03   562
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     3    100  1.0E+00     22 (0.0E+00) 1.8E+00  2.9304795E+03   562              T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100  4.2E-01                  1.1E-17  2.9007045E+03   661
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     4    100  1.0E+00     23 (0.0E+00) 9.2E-01  2.9007101E+03   661              T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100                           1.7E+00  2.9001502E+03   561
+          200                           2.4E-01  2.8981189E+03   461
+          300  6.2E-01                  2.4E-17  2.8980722E+03   369
+          400  6.2E-01                  4.8E-25  2.8980156E+03   369
+          500  3.4E-02                  6.9E-18  2.8980037E+03   446
+          600  2.4E-02                           2.8980033E+03   546
+          700  2.3E-02                           2.8980030E+03   646
+          800 -1.8E-02                  3.5E-18  2.8980028E+03   746
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     4    914              27 (0.0E+00) 9.2E-01  2.9007101E+03   760           r  T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100 -1.5E+01                  1.8E-15  2.9023784E+03   858
+          200 -1.4E+01                  5.0E-17  2.9016519E+03   958
+          300 -1.4E+01                  4.4E-17  2.9009818E+03  1058
+          400 -8.1E+00                  1.8E-15  2.9007087E+03  1158
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     5    424  3.4E-06     37 (0.0E+00) 9.2E-01  2.9006976E+03  1182         s    T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100                           1.7E+00  2.9000318E+03  1082
+          200                           1.5E+00  2.8996775E+03   982
+          300                           1.3E+00  2.8991640E+03   882
+          400                           3.0E-01  2.8980589E+03   782
+          500 -1.2E-02                           2.8979926E+03   837
+          600 -1.1E-02                           2.8979926E+03   937
+          700 -1.1E-02                           2.8979925E+03  1037
+          800 -9.5E-03                  1.7E-18  2.8979924E+03  1137
+          900  7.1E-03                           2.8979924E+03  1237
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     5   1368              41 (0.0E+00) 9.2E-01  2.9006976E+03  1281         s r  T
+
+        Minor   QPmult   nInf   SumInf   rgNorm    QPobjective    nS
+          100 -1.5E+01                  1.8E-15  2.9023637E+03  1379
+          200 -1.4E+01                  1.8E-15  2.9016380E+03  1479
+          300 -1.4E+01                  1.8E-15  2.9009686E+03  1579
+          400 -8.0E+00                  2.0E-16  2.9006961E+03  1679
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction    nS Penalty
+     6    424  3.4E-06     51 (0.0E+00) 9.2E-01  2.9006850E+03  1703         s    T
+ 
+ SNOPTC EXIT  40 -- terminated after numerical difficulties
+ SNOPTC INFO  41 -- current point cannot be improved
+
+ Problem name                 Optimiza
+ No. of iterations                3537   Objective value      2.9006850019E+03
+ No. of major iterations             6   Linear objective     0.0000000000E+00
+ Penalty parameter           0.000E+00   Nonlinear objective  2.9006850019E+03
+ No. of calls to funobj             56   No. of calls to funcon             56
+ No. of superbasics               1703   No. of basic nonlinears             0
+ No. of degenerate steps             1   Percentage                       0.03
+ Max x                     101 1.0E+00   Max pi                      1 0.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas          2662 1.8E+00
+ Nonlinear constraint violn    0.0E+00
+ 
+ 
+
+ Solution printed on file  18
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                    1402.96 seconds
+ Time for solution output                       0.05 seconds
+ Time for constraint functions               1434.49 seconds
+ Time for objective function                    0.00 seconds
