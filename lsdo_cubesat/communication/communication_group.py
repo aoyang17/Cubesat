@@ -1,6 +1,13 @@
 import numpy as np
 from openmdao.api import Problem, IndepVarComp, Group, ExecComp
+from lsdo_utils.api import ArrayExpansionComp, BsplineComp, PowerCombinationComp, LinearCombinationComp, ElementwiseMaxComp
+from lsdo_utils.api import get_bspline_mtx
+from lsdo_cubesat.api import Swarm, Cubesat
 
+# from lsdo_cubesat.api import GS_net, Ground_station
+from lsdo_cubesat.swarm.ground_station import Ground_station
+from lsdo_cubesat.swarm.GS_net import GS_net
+from lsdo_cubesat.ground_station_group import GSGroup
 from lsdo_cubesat.attitude.rot_mtx_b_i_comp import RotMtxBIComp
 from lsdo_cubesat.communication.Antenna_rot_mtx import AntennaRotationMtx
 from lsdo_cubesat.communication.Antenna_rotation import AntRotationComp
@@ -24,20 +31,20 @@ class CommGroup(Group):
         self.options.declare('num_times', types=int)
         self.options.declare('num_cp', types=int)
         self.options.declare('step_size', types=float)
-        self.options.declare('cubesat')
+
         self.options.declare('mtx')
+        self.options.declare('cubesat')
         # self.options.declare('ground_station')
 
     def setup(self):
+
         num_times = self.options['num_times']
         num_cp = self.options['num_cp']
         step_size = self.options['step_size']
         cubesat = self.options['cubesat']
         mtx = self.options['mtx']
-        # ground_station = self.options['ground_station']
 
         comp = IndepVarComp()
-
         comp.add_output('lon', val=32.8563, units='rad')
         comp.add_output('lat', val=-117.2500, units='rad')
         comp.add_output('alt', val=0.4849368, units='km')
@@ -47,7 +54,7 @@ class CommGroup(Group):
         # comp.add_output('orbit_state_km', val=np.zeros((6, num_times)))
         comp.add_output('antAngle', val=10.0, units='rad')
         comp.add_design_var('antAngle', lower=0., upper=10000)
-        comp.add_output('P_comm', val=13.0 * np.ones(num_times), units='W')
+        comp.add_output('P_comm_cp', val=13.0 * np.ones(num_cp), units='W')
         comp.add_output('gain', val=16.0 * np.ones(num_times))
         comp.add_output('Initial_Data', val=0.0)
 
@@ -86,6 +93,15 @@ class CommGroup(Group):
         comp = StationSatelliteDistanceComp(num_times=num_times)
         self.add_subsystem('Gsdist', comp, promotes=['*'])
 
+        comp = BsplineComp(
+            num_pt=num_times,
+            num_cp=num_cp,
+            jac=mtx,
+            in_name='P_comm_cp',
+            out_name='P_comm',
+        )
+        self.add_subsystem('P_comm_comp', comp, promotes=['*'])
+
         comp = BitRateComp(num_times=num_times)
         self.add_subsystem('Download_rate', comp, promotes=['*'])
 
@@ -100,34 +116,3 @@ class CommGroup(Group):
             Data=np.empty(num_times),
         )
         self.add_subsystem('total_data_downloaded_comp', comp, promotes=['*'])
-
-
-# if __name__ == '__main__':
-#     import numpy as np
-#     import openmdao.api as om
-
-#     from openmdao.api import Problem, IndepVarComp, Group
-
-#     "Data from Goldestone Deep Space Communication Complex"
-
-#     num_times = 3
-
-#     prob = Problem()
-#     prob.CommGroup = CommGroup
-
-#     prob.model.add_subsystem('lon', om.IndepVarComp('lon', -116.8873))
-#     prob.model.add_subsystem('lat', om.IndepVarComp('lat', 35.4227))
-#     prob.model.add_subsystem('alt', om.IndepVarComp('alt', 0.9))
-#     prob.model.add_subsystem('t', om.IndepVarComp('t', np.arange(1, num_times + 1, 1)))
-#     prob.model.add_subsystem('Rot_b_i', om.IndepVarComp('Rot_b_i', np.random.random((3,3,num_times))))
-#     prob.model.add_subsystem('r_e2b_i', om.IndepVarComp('r_e2b_i', np.random.random((6, num_times))))
-#     prob.model.add_subsystem('antAngle', om.IndepVarComp('antAngle', 1.5))
-#     prob.model.add_subsystem('P_comm', om.IndepVarComp('P_comm', 10 * np.ones(num_times)))
-#     prob.model.add_subsystem('gain', om.IndepVarComp('gain', np.random.randint(1.76,40,size=num_times)))
-#     prob.model.add_subsystem('Initial_Data', om.IndepVarComp('Initial_Data', 0.0))
-
-#     comm_group = CommGroup(num_times=num_times)
-#     prob.model.add_subsystem('comm_group', comm_group, promotes=['*'])
-
-#     prob.setup(check=True)
-#     prob.run()

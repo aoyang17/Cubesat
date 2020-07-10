@@ -59,6 +59,35 @@ swarm.add(
         perigee_altitude=500.002,
         apogee_altitude=499.98,
     ))
+# swarm.add(Ground_station(
+#     name='UCSD',
+#     lon=-117.1611,
+#     lat=32.7157,
+#     alt=0.4849,
+# ))
+
+# swarm.add(Ground_station(
+#     name='UIUC',
+#     lon=-88.2272,
+#     lat=32.8801,
+#     alt=0.2329,
+# ))
+
+# swarm.add(
+#     Ground_station(
+#         name='Georgia',
+#         lon=-84.3963,
+#         lat=33.7756,
+#         alt=0.2969,
+#     ))
+
+# swarm.add(
+#     Ground_station(
+#         name='Montana',
+#         lon=-109.5337,
+#         lat=33.7756,
+#         alt=1.04,
+#     ))
 
 prob = Problem()
 prob.swarm = swarm
@@ -66,8 +95,19 @@ prob.swarm = swarm
 swarm_group = SwarmGroup(swarm=swarm, )
 prob.model.add_subsystem('swarm_group', swarm_group, promotes=['*'])
 
+# obj_comp = ExecComp(
+#     'obj= 0.01 * total_propellant_used- 0.001 * total_data_downloaded + 1e-4 * (0'
+#     '+ masked_normal_distance_sunshade_detector_mm_sq_sum'
+#     '+ masked_normal_distance_optics_detector_mm_sq_sum'
+#     '+ masked_distance_sunshade_optics_mm_sq_sum'
+#     '+ masked_distance_optics_detector_mm_sq_sum'
+#     '+ sunshade_cubesat_group_relative_orbit_state_sq_sum'
+#     '+ optics_cubesat_group_relative_orbit_state_sq_sum'
+#     '+ detector_cubesat_group_relative_orbit_state_sq_sum'
+#     ') / {}'.format(num_times))
+
 obj_comp = ExecComp(
-    'obj= 0.01 * total_propellant_used- 0.00001 * total_data_downloaded + 0.0001 * (0'
+    'obj= 0.01 * total_propellant_used- 0.001 * total_data_downloaded + 1e-5 * (0'
     '+ masked_normal_distance_sunshade_detector_mm_sq_sum'
     '+ masked_normal_distance_optics_detector_mm_sq_sum'
     '+ masked_distance_sunshade_optics_mm_sq_sum'
@@ -76,6 +116,7 @@ obj_comp = ExecComp(
     '+ optics_cubesat_group_relative_orbit_state_sq_sum'
     '+ detector_cubesat_group_relative_orbit_state_sq_sum'
     ') / {}'.format(num_times))
+
 obj_comp.add_objective('obj', scaler=1.e-3)
 # obj_comp.add_objective('obj')
 prob.model.add_subsystem('obj_comp', obj_comp, promotes=['*'])
@@ -93,13 +134,13 @@ for cubesat_name in ['sunshade', 'optics', 'detector']:
 
 prob.driver = pyOptSparseDriver()
 prob.driver.options['optimizer'] = 'SNOPT'
-prob.driver.opt_settings['Major feasibility tolerance'] = 1.e-5
-prob.driver.opt_settings['Major optimality tolerance'] = 1.e-5
+prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
+prob.driver.opt_settings['Major optimality tolerance'] = 1e-7
 prob.driver.opt_settings['Iterations limit'] = 500000000
 prob.driver.opt_settings['Major iterations limit'] = 1000000
 prob.driver.opt_settings['Minor iterations limit'] = 500000
-# prob.driver.opt_settings['Iterations limit'] = 2
-# prob.driver.opt_settings['Major iterations limit'] = 2
+# prob.driver.opt_settings['Iterations limit'] = 3
+# prob.driver.opt_settings['Major iterations limit'] = 3
 # prob.driver.opt_settings['Minor iterations limit'] = 1
 
 # print(prob['total_data_downloaded'])
@@ -107,7 +148,11 @@ prob.setup(check=True)
 # prob.model.list_inputs()
 # prob.model.list_outputs()
 
-prob.run_driver()
+# prob.run_driver()
+prob.run()
+# prob.run_model()
+# prob.check_partials(compact_print=True)
+
 print(prob['optics_cubesat_group.propellant_mass'])
 print(prob['detector_cubesat_group.propellant_mass'])
 print(prob['sunshade_cubesat_group.propellant_mass'])

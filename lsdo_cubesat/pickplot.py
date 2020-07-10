@@ -9,11 +9,12 @@ from pylab import *
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 
-path = "/home/lsdo/Cubesat/lsdo_cubesat/_data/opt.00219.pkl"
+path = "/home/lsdo/Cubesat/lsdo_cubesat/_data/opt.00859.pkl"
+# path = '/home/lsdo/Cubesat/lsdo_cubesat/1314/_data_123/opt.03198.pkl'
 
 with open(path, 'rb') as f:
     info = pickle.load(f)
-print(info['sunshade_cubesat_group.relative_orbit_state'].shape)
+# print(info)
 
 X_reference = info['reference_orbit_state'][0, :]
 Y_reference = info['reference_orbit_state'][1, :]
@@ -32,22 +33,6 @@ Y_optics_relative = info['optics_cubesat_group.relative_orbit_state'][1, :]
 Z_optics_relative = info['optics_cubesat_group.relative_orbit_state'][2, :]
 
 time = np.arange((X_sunshade_relative.shape[0]))
-# print(time)
-
-X = X_reference / 1000.0 + X_sunshade_relative
-Y = Y_reference / 1000.0 + Y_sunshade_relative
-
-# fig = figure()
-# ax = Axes3D(fig)
-# ax.plot(X_reference / 100 + X_sunshade_relative,
-#         Y_reference / 100 + Y_sunshade_relative,
-#         Z_reference / 100 + Z_sunshade_relative)
-
-# ax.plot(X_reference, Y_reference, Z_reference)
-
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import math
 
 x = np.linspace(-10, 10, 100)
 
@@ -72,21 +57,84 @@ time = np.arange(r_orbit.shape[0])
 
 theta = 2 * np.pi / (r_orbit.shape[0]) * time
 
-print(reference_matrix)
+A = info["normal_distance_sunshade_detector_mm"]
+B = info["normal_distance_optics_detector_mm"]
+C = info["distance_sunshade_optics_mm"]
+D = info["distance_optics_detector_mm"]
+E = info["detector_cubesat_group.roll"]
+F = info["detector_cubesat_group.pitch"]
+G = info["detector_cubesat_group.Data"]
+Gr = info["detector_cubesat_group.Download_rate"]
+P = info["detector_cubesat_group.P_comm"]
+M = info["detector_cubesat_group.propellant_mass"]
+obj = info["obj"]
+print(G.shape)
+
+masked_normal_distance_sunshade_detector = info[
+    'masked_normal_distance_sunshade_detector_mm_sq_sum']
+masked_normal_distance_optics_detector = info[
+    'masked_normal_distance_optics_detector_mm_sq_sum']
+masked_distance_sunshade_optics = info[
+    'masked_distance_sunshade_optics_mm_sq_sum']
+masked_distance_optics_detector = info[
+    'masked_distance_optics_detector_mm_sq_sum']
+optics_relative = info['optics_cubesat_group.relative_orbit_state_sq_sum']
+detector_relative = info['detector_cubesat_group.relative_orbit_state_sq_sum']
+sunshade_relative = info["sunshade_cubesat_group.relative_orbit_state_sq_sum"]
+obj = info['obj']
+
+position = info['detector_cubesat_group.position']
+velocity = info['detector_cubesat_group.velocity']
+
+position = np.linalg.norm(position, ord=1, axis=0)
+velocity = np.linalg.norm(velocity, ord=1, axis=0)
+print(Gr)
+print(M.shape)
+
+# print(obj)
+# print(masked_normal_distance_sunshade_detector / 1500)
+# print(masked_normal_distance_optics_detector / 1500)
+# print(masked_distance_sunshade_optics / 1500)
+# print(masked_distance_optics_detector / 1500)
+# print(sunshade_relative / 1500)
+# print(optics_relative / 1500)
+# print(detector_relative / 1500)
+# print(reference_matrix)
 
 sns.set()
+
+# C = np.abs(sunshade_matrix - detector_matrix)
+# D = np.linalg.norm(C, ord=1, axis=0)
 
 # plt.plot(time, r_orbit)
 # plt.plot(time, r_optics)
 # plt.plot(time[:5], (r_orbit + r_sunshade * 1e5)[:5], label='sunshade')
 # plt.plot(time[:5], (r_orbit + r_optics * 1e5)[:5], label='optics')
 # plt.plot(time[:5], (r_orbit + r_detector * 1e5)[:5], label='detector')
-plt.plot(time, np.abs(r_sunshade - r_detector), label='sunshade-detector')
-plt.plot(time, np.abs(r_optics - r_sunshade), label='optics-sunshade')
-plt.plot(time, np.abs(r_optics - r_detector), label='optics-detector')
-plt.plot(time, np.abs(r_detector - r_sunshade), label='detector-sunshade')
+# plt.plot(time, np.abs(r_sunshade - r_detector), label='sunshade-detector')
+# plt.plot(time, np.abs(r_optics - r_sunshade), label='optics-sunshade')
+# plt.plot(time, np.abs(r_optics - r_detector), label='optics-detector')
+# plt.plot(time, np.abs(r_detector - r_sunshade), label='detector-sunshade')
+# plt.plot(time, M.T)
+# plt.plot(time, G.T)
+# plt.plot(time, P)
+plt.plot(time, A, label="alignment_s_d")
+plt.plot(time, B, label="alignment_o_d")
+plt.plot(time, C, label="seperation_s_o")
+plt.plot(time, D, label="seperation_o_d")
+# plt.plot(time, E)
+# plt.plot(time, F)
+# plt.plot(time, G.T)
+# plt.plot(time, P)
+
+# plt.plot(time, sunshade_relative)
+# plt.plot(time, detector_relative)
+# plt.plot(time, optics_relative)
+
 # plt.plot(time, r_detector - r_optics, label='detector-optics')
-# plt.plot(time, r_sunshade - r_detector, label='sunshade-detector')
+# plt.plot(time,
+#          np.abs((sunshade_matrix - detector_matrix)[2, :]),
+#          label='sunshade-detector')
 # plt.plot(time, np.abs(r_sunshade - r_optics), label='sunshade-optics')
 # plt.plot(time, r_orbit / 10000 + r_detector)
 plt.legend()

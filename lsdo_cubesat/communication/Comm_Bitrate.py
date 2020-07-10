@@ -76,13 +76,13 @@ class BitRateComp(ExplicitComponent):
             outputs['Download_rate'][i] = self.alpha * P_comm[i] * gain[i] * \
                 CommLOS[i] / S2 ** 2
 
-        np.savetxt("rundata/GSdist.csv", GSdist, header="GSdist")
-        np.savetxt("rundata/P_comm.csv", P_comm, header="P_comm")
-        np.savetxt("rundata/gain.csv", gain, header="gain")
-        np.savetxt("rundata/CommLOS_final.csv", CommLOS, header="CommLOS")
+        # np.savetxt("rundata/GSdist.csv", GSdist, header="GSdist")
+        # np.savetxt("rundata/P_comm.csv", P_comm, header="P_comm")
+        # np.savetxt("rundata/gain.csv", gain, header="gain")
+        # np.savetxt("rundata/CommLOS_final.csv", CommLOS, header="CommLOS")
 
-        Bitrate = outputs['Download_rate']
-        np.savetxt("rundata/Bitrate.csv", Bitrate, header="Bitrate")
+        # Bitrate = outputs['Download_rate']
+        # np.savetxt("rundata/Bitrate.csv", Bitrate, header="Bitrate")
 
     def compute_partials(self, inputs, partials):
         num_times = self.options["num_times"]
