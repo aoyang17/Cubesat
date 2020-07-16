@@ -13,7 +13,6 @@ from lsdo_cubesat.orbit.rot_mtx_t_i_comp import RotMtxTIComp
 
 
 class ConstantOrbitGroup(Group):
-    
     def initialize(self):
         self.options.declare('num_times', types=int)
         self.options.declare('num_cp', types=int)
@@ -62,8 +61,8 @@ class ConstantOrbitGroup(Group):
         self.add_subsystem('orbit_rk4_comp', comp, promotes=['*'])
 
         comp = OrbitStateDecompositionComp(
-            num_times=num_times, 
-            position_name='position_km', 
+            num_times=num_times,
+            position_name='position_km',
             velocity_name='velocity_km_s',
             orbit_state_name='reference_orbit_state_km',
         )

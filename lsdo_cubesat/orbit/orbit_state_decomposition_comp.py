@@ -2,12 +2,11 @@ import numpy as np
 
 from openmdao.api import ExplicitComponent
 
-
 # 'position_km'
 # 'velocity_km_s'
 
-class OrbitStateDecompositionComp(ExplicitComponent):
 
+class OrbitStateDecompositionComp(ExplicitComponent):
     def initialize(self):
         self.options.declare('num_times', types=int)
         self.options.declare('position_name', types=str)
@@ -29,11 +28,19 @@ class OrbitStateDecompositionComp(ExplicitComponent):
 
         rows = arange_3
         cols = orbit_state_indices[:3, :].flatten()
-        self.declare_partials(position_name, orbit_state_name, val=1., rows=rows, cols=cols)
+        self.declare_partials(position_name,
+                              orbit_state_name,
+                              val=1.,
+                              rows=rows,
+                              cols=cols)
 
         rows = arange_3
         cols = orbit_state_indices[3:, :].flatten()
-        self.declare_partials(velocity_name, orbit_state_name, val=1., rows=rows, cols=cols)
+        self.declare_partials(velocity_name,
+                              orbit_state_name,
+                              val=1.,
+                              rows=rows,
+                              cols=cols)
 
     def compute(self, inputs, outputs):
         position_name = self.options['position_name']
@@ -47,7 +54,6 @@ class OrbitStateDecompositionComp(ExplicitComponent):
 if __name__ == '__main__':
     from openmdao.api import Problem, IndepVarComp
 
-
     num_times = 3
 
     prob = Problem()
@@ -57,12 +63,10 @@ if __name__ == '__main__':
     comp.add_output(orbit_state_name, np.random.rand(6, num_times))
     prob.model.add_subsystem('inputs_comp', comp, promotes=['*'])
 
-    comp = OrbitStateDecompositionComp(
-        num_times=num_times,
-        orbit_state_name = 'orbit_state',
-        position_name = 'position',
-        velocity_name = 'velocity'
-    )
+    comp = OrbitStateDecompositionComp(num_times=num_times,
+                                       orbit_state_name='orbit_state',
+                                       position_name='position',
+                                       velocity_name='velocity')
     prob.model.add_subsystem('comp', comp, promotes=['*'])
 
     prob.setup(check=True)

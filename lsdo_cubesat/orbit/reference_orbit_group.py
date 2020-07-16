@@ -14,7 +14,6 @@ from lsdo_cubesat.orbit.rot_mtx_t_i_comp import RotMtxTIComp
 
 
 class ReferenceOrbitGroup(Group):
-
     def initialize(self):
         self.options.declare('num_times', types=int)
         self.options.declare('num_cp', types=int)
@@ -68,8 +67,8 @@ class ReferenceOrbitGroup(Group):
         self.add_subsystem('orbit_rk4_comp', comp, promotes=['*'])
 
         comp = OrbitStateDecompositionComp(
-            num_times=num_times, 
-            position_name='position_km', 
+            num_times=num_times,
+            position_name='position_km',
             velocity_name='velocity_km_s',
             orbit_state_name='reference_orbit_state_km',
         )
@@ -95,7 +94,7 @@ class ReferenceOrbitGroup(Group):
                            promotes=['*'])
 
         comp = LinearCombinationComp(
-            shape=(num_times,),
+            shape=(num_times, ),
             out_name='radius',
             coeffs_dict=dict(radius_km=1.e3),
         )

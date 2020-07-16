@@ -86,11 +86,11 @@ class CommLOSComp(ExplicitComponent):
         #            delimiter=',')
 
         outputs['CommLOS'] = sigmoid(proj - Rb)
-        CommLOS = outputs['CommLOS']
-        np.savetxt("rundata/CommLOS.csv",
-                   CommLOS,
-                   header="CommLOS",
-                   delimiter=',')
+        # CommLOS = outputs['CommLOS']
+        # np.savetxt("rundata/CommLOS.csv",
+        #            CommLOS,
+        #            header="CommLOS",
+        #            delimiter=',')
         # print(outputs['CommLOS'])
 
     def compute_partials(self, inputs, partials):

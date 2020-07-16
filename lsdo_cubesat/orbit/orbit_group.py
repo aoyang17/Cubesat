@@ -14,7 +14,6 @@ from lsdo_cubesat.orbit.rot_mtx_t_i_comp import RotMtxTIComp
 
 
 class OrbitGroup(Group):
-
     def initialize(self):
         self.options.declare('num_times', types=int)
         self.options.declare('num_cp', types=int)
@@ -42,9 +41,7 @@ class OrbitGroup(Group):
         comp.add_output('radius_earth_km',
                         val=cubesat['radius_earth_km'],
                         shape=num_times)
-        for var_name in [
-            'initial_orbit_state'
-        ]:
+        for var_name in ['initial_orbit_state']:
             comp.add_output(var_name, val=cubesat[var_name])
         self.add_subsystem('input_comp', comp, promotes=['*'])
 
@@ -52,7 +49,7 @@ class OrbitGroup(Group):
         # self.add_subsystem('initial_orbit_comp', comp, promotes=['*'])
 
         comp = LinearCombinationComp(
-            shape=(num_times,),
+            shape=(num_times, ),
             out_name='mass',
             coeffs_dict=dict(dry_mass=1., propellant_mass=1.),
         )
@@ -73,7 +70,9 @@ class OrbitGroup(Group):
                 num_times=num_times,
                 step_size=step_size,
             )
-            coupled_group.add_subsystem('relative_orbit_rk4_comp', comp, promotes=['*'])
+            coupled_group.add_subsystem('relative_orbit_rk4_comp',
+                                        comp,
+                                        promotes=['*'])
 
             comp = LinearCombinationComp(
                 shape=(6, num_times),
@@ -84,15 +83,17 @@ class OrbitGroup(Group):
                 ),
             )
             coupled_group.add_subsystem('orbit_state_comp',
-                               comp,
-                               promotes=['*'])
+                                        comp,
+                                        promotes=['*'])
 
             comp = LinearCombinationComp(
                 shape=(6, num_times),
                 out_name='orbit_state_km',
                 coeffs_dict=dict(orbit_state=1.e-3),
             )
-            coupled_group.add_subsystem('orbit_state_km_comp', comp, promotes=['*'])
+            coupled_group.add_subsystem('orbit_state_km_comp',
+                                        comp,
+                                        promotes=['*'])
 
             comp = RotMtxTIComp(num_times=num_times)
             coupled_group.add_subsystem('rot_mtx_t_i_3x3xn_comp',
@@ -121,14 +122,12 @@ class OrbitGroup(Group):
                                         comp,
                                         promotes=['*'])
 
-            comp = PowerCombinationComp(
-                shape=shape,
-                out_name='drag_3xn',
-                powers_dict=dict(
-                    drag_unit_vec_3xn=1.,
-                    drag_scalar_3xn=1.,
-                )
-            )
+            comp = PowerCombinationComp(shape=shape,
+                                        out_name='drag_3xn',
+                                        powers_dict=dict(
+                                            drag_unit_vec_3xn=1.,
+                                            drag_scalar_3xn=1.,
+                                        ))
             coupled_group.add_subsystem('drag_3xn_comp', comp, promotes=['*'])
 
             coupled_group.nonlinear_solver = NonlinearBlockGS(iprint=0,
@@ -143,8 +142,8 @@ class OrbitGroup(Group):
             self.add_subsystem('coupled_group', coupled_group, promotes=['*'])
 
         comp = OrbitStateDecompositionComp(
-            num_times=num_times, 
-            position_name='position_km', 
+            num_times=num_times,
+            position_name='position_km',
             velocity_name='velocity_km_s',
             orbit_state_name='orbit_state_km',
         )
@@ -208,18 +207,26 @@ class OrbitGroup(Group):
         comp.add_constraint('ks_altitude_km', lower=450.)
         self.add_subsystem('ks_altitude_km_comp', comp, promotes=['*'])
 
-        comp = PowerCombinationComp(
-            shape=(6, num_times,),
-            out_name='relative_orbit_state_sq',
-            powers_dict={
-                'relative_orbit_state': 2.,
-            }
-        )
-        self.add_subsystem('relative_orbit_state_sq_comp', comp, promotes=['*'])
+        comp = PowerCombinationComp(shape=(
+            6,
+            num_times,
+        ),
+                                    out_name='relative_orbit_state_sq',
+                                    powers_dict={
+                                        'relative_orbit_state': 2.,
+                                    })
+        self.add_subsystem('relative_orbit_state_sq_comp',
+                           comp,
+                           promotes=['*'])
 
         comp = ScalarContractionComp(
-            shape=(6, num_times,),
+            shape=(
+                6,
+                num_times,
+            ),
             out_name='relative_orbit_state_sq_sum',
             in_name='relative_orbit_state_sq',
         )
-        self.add_subsystem('relative_orbit_state_sq_sum_comp', comp, promotes=['*'])
+        self.add_subsystem('relative_orbit_state_sq_sum_comp',
+                           comp,
+                           promotes=['*'])

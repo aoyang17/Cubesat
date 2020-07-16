@@ -47,7 +47,7 @@ gs_alt = 0.256
 ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
 lla = pyproj.Proj(proj='latlong', ellps='WGS84', datum='WGS84')
 
-path = '/home/lsdo/Cubesat/lsdo_cubesat/_data/opt.00219.pkl'
+path = '/home/lsdo/Cubesat/lsdo_cubesat/_data/opt.00002.pkl'
 
 with open(path, 'rb') as f:
     info = pickle.load(f)

@@ -4,7 +4,6 @@ from openmdao.core.explicitcomponent import ExplicitComponent
 
 
 class KSComp(ExplicitComponent):
-
     def initialize(self):
         """
         Declare options.
@@ -16,8 +15,11 @@ class KSComp(ExplicitComponent):
         self.options.declare('constraint_size', types=int, default=1)
 
         self.options.declare('lower_flag', types=bool, default=False)
-        self.options.declare('rho', 50.0, desc="Constraint Aggregation Factor.")
-        self.options.declare('bound', 0.0, desc="Upper bound for constraint, default is zero.")
+        self.options.declare('rho',
+                             50.0,
+                             desc="Constraint Aggregation Factor.")
+        self.options.declare(
+            'bound', 0.0, desc="Upper bound for constraint, default is zero.")
 
     def setup(self):
         """
@@ -30,7 +32,7 @@ class KSComp(ExplicitComponent):
         constraint_size = self.options['constraint_size']
 
         # Inputs
-        self.add_input(in_name, shape=shape + (constraint_size,))
+        self.add_input(in_name, shape=shape + (constraint_size, ))
 
         # Outputs
         self.add_output(out_name, shape=shape)
@@ -39,8 +41,10 @@ class KSComp(ExplicitComponent):
 
         rows = np.zeros(constraint_size, dtype=np.int)
         cols = range(constraint_size)
-        rows = np.tile(rows, size) + np.repeat(np.arange(size), constraint_size)
-        cols = np.tile(cols, size) + np.repeat(np.arange(size), constraint_size) * constraint_size
+        rows = np.tile(rows, size) + np.repeat(np.arange(size),
+                                               constraint_size)
+        cols = np.tile(cols, size) + np.repeat(
+            np.arange(size), constraint_size) * constraint_size
 
         self.declare_partials(of=out_name, wrt=in_name, rows=rows, cols=cols)
 
@@ -90,9 +94,6 @@ class KSComp(ExplicitComponent):
 
         self.dKS_dg = dKS_dg
 
-        # if lower_flag:
-        #     self.dKS_dg = -self.dKS_dg
-
     def compute_partials(self, inputs, partials):
         """
         Compute sub-jacobian parts. The model is assumed to be in an unscaled state.
@@ -112,9 +113,9 @@ class KSComp(ExplicitComponent):
 if __name__ == '__main__':
     from openmdao.api import Problem, IndepVarComp
 
-    shape = (2, 3, 4)
+    shape = (4, 1, 3)
     # shape = (1,)
-    constraint_size = 5
+    constraint_size = 1
 
     prob = Problem()
 
@@ -127,7 +128,7 @@ if __name__ == '__main__':
         in_name='x',
         out_name='y',
         shape=shape,
-        constraint_size=5,  
+        constraint_size=1,
         lower_flag=False,
         rho=100.,
         bound=0.,
@@ -136,6 +137,10 @@ if __name__ == '__main__':
 
     prob.setup()
     prob.run_model()
+    print(prob['x'])
+    print(prob['x'].shape)
+    print(prob['y'])
+    print(prob['y'].shape)
     prob.check_partials(compact_print=True)
     # print(prob['x'], 'x')
     # print(prob['y'], 'y')

@@ -13,7 +13,6 @@ from lsdo_cubesat.alignment.mask_vec_comp import MaskVecComp
 
 
 class AlignmentGroup(Group):
-
     def initialize(self):
         self.options.declare('swarm')
         self.options.declare('mtx')
@@ -49,7 +48,7 @@ class AlignmentGroup(Group):
         # self.add_subsystem('constant_orbit_group', group, promotes=['*'])
 
         comp = CrossProductComp(
-            shape_no_3=(num_times,),  
+            shape_no_3=(num_times, ),
             out_index=0,
             in1_index=0,
             in2_index=0,
@@ -166,31 +165,33 @@ class AlignmentGroup(Group):
                 promotes=['*'])
 
         for constraint_name in [
-            'normal_distance_{}_{}'.format(name1, name2)
-            for name1, name2 in transverse_constraint_names
+                'normal_distance_{}_{}'.format(name1, name2)
+                for name1, name2 in transverse_constraint_names
         ] + [
-            'distance_{}_{}'.format(name1, name2)
-            for name1, name2 in separation_constraint_names
+                'distance_{}_{}'.format(name1, name2)
+                for name1, name2 in separation_constraint_names
         ]:
             comp = PowerCombinationComp(
-                shape=(num_times,),
+                shape=(num_times, ),
                 out_name='{}_mm'.format(constraint_name),
                 coeff=1.e6,
                 powers_dict={
                     '{}_km'.format(constraint_name): 1.,
-                }
-            )
-            self.add_subsystem('{}_mm_comp'.format(constraint_name), comp, promotes=['*'])
+                })
+            self.add_subsystem('{}_mm_comp'.format(constraint_name),
+                               comp,
+                               promotes=['*'])
 
             comp = PowerCombinationComp(
-                shape=(num_times,),
+                shape=(num_times, ),
                 out_name='masked_{}_mm'.format(constraint_name),
                 powers_dict={
                     'mask_vec': 1.,
                     '{}_mm'.format(constraint_name): 1.,
-                }
-            )
-            self.add_subsystem('masked_{}_mm_comp'.format(constraint_name), comp, promotes=['*'])
+                })
+            self.add_subsystem('masked_{}_mm_comp'.format(constraint_name),
+                               comp,
+                               promotes=['*'])
 
             comp = KSComp(
                 in_name='masked_{}_mm'.format(constraint_name),
@@ -204,17 +205,21 @@ class AlignmentGroup(Group):
                                promotes=['*'])
 
             comp = PowerCombinationComp(
-                shape=(num_times,),
+                shape=(num_times, ),
                 out_name='masked_{}_mm_sq'.format(constraint_name),
                 powers_dict={
                     'masked_{}_mm'.format(constraint_name): 2.,
-                }
-            )
-            self.add_subsystem('masked_{}_mm_sq_comp'.format(constraint_name), comp, promotes=['*'])
+                })
+            self.add_subsystem('masked_{}_mm_sq_comp'.format(constraint_name),
+                               comp,
+                               promotes=['*'])
 
             comp = ScalarContractionComp(
-                shape=(num_times,),
+                shape=(num_times, ),
                 out_name='masked_{}_mm_sq_sum'.format(constraint_name),
                 in_name='masked_{}_mm_sq'.format(constraint_name),
             )
-            self.add_subsystem('masked_{}_mm_sq_sum_comp'.format(constraint_name), comp, promotes=['*'])
+            self.add_subsystem(
+                'masked_{}_mm_sq_sum_comp'.format(constraint_name),
+                comp,
+                promotes=['*'])

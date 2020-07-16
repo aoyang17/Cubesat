@@ -14,7 +14,7 @@ class EarthSpinComp(ExplicitComponent):
         num_times = self.options['num_times']
         # launch_date = self.options['launch_date']
 
-        self.add_input('times', shape=num_times, units='s')
+        self.add_input('comm_times', shape=num_times, units='s')
 
         self.add_output(
             'q_E',
@@ -26,12 +26,12 @@ class EarthSpinComp(ExplicitComponent):
         cols = np.tile(cols, 4)
 
         rows = np.arange(0, 4 * num_times)
-        self.declare_partials('q_E', 'times', rows=rows, cols=cols)
+        self.declare_partials('q_E', 'comm_times', rows=rows, cols=cols)
 
     def compute(self, inputs, outputs):
         num_times = self.options['num_times']
 
-        t = inputs['times']
+        t = inputs['comm_times']
 
         fact = np.pi / 3600.0 / 24.0
         theta = fact * t
@@ -42,7 +42,7 @@ class EarthSpinComp(ExplicitComponent):
     def compute_partials(self, inputs, partials):
         num_times = self.options['num_times']
 
-        t = inputs['times']
+        t = inputs['comm_times']
         # print(partials['q_E','times'].shape)
 
         fact = np.pi / 3600.0 / 24.0
@@ -52,7 +52,7 @@ class EarthSpinComp(ExplicitComponent):
         dq_dt[0, :] = -np.sin(theta) * fact
         dq_dt[3, :] = -np.cos(theta) * fact
 
-        partials['q_E', 'times'] = dq_dt.flatten()
+        partials['q_E', 'comm_times'] = dq_dt.flatten()
 
 
 if __name__ == '__main__':
@@ -80,4 +80,3 @@ if __name__ == '__main__':
     prob.model.list_outputs()
 
     prob.check_partials(compact_print=True)
-

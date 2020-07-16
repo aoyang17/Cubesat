@@ -44,6 +44,7 @@ class CommGroup(Group):
         cubesat = self.options['cubesat']
         mtx = self.options['mtx']
 
+        comm_times = np.linspace(0., step_size * (num_times - 1), num_times)
         comp = IndepVarComp()
         comp.add_output('lon', val=32.8563, units='rad')
         comp.add_output('lat', val=-117.2500, units='rad')
@@ -52,6 +53,7 @@ class CommGroup(Group):
         # comp.add_output('t', val=np.zeros(num_times))
         # comp.add_output('rot_mtx_i_b_3x3xn', val=np.zeros((3, 3, num_times)))
         # comp.add_output('orbit_state_km', val=np.zeros((6, num_times)))
+        comp.add_output('comm_times', units='s', val=comm_times)
         comp.add_output('antAngle', val=10.0, units='rad')
         comp.add_design_var('antAngle', lower=0., upper=10000)
         comp.add_output('P_comm_cp', val=13.0 * np.ones(num_cp), units='W')
