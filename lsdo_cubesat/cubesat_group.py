@@ -8,6 +8,7 @@ from lsdo_cubesat.aerodynamics.aerodynamics_group import AerodynamicsGroup
 from lsdo_cubesat.orbit.orbit_group import OrbitGroup
 from lsdo_cubesat.communication.comm_group import CommGroup
 # from lsdo_cubesat.communication.Data_download_rk4_comp import DataDownloadComp
+from lsdo_cubesat.communication.Data_download_rk4_comp import DataDownloadComp
 
 from lsdo_utils.comps.arithmetic_comps.elementwise_max_comp import ElementwiseMaxComp
 
@@ -34,6 +35,7 @@ class CubesatGroup(Group):
         comp = IndepVarComp()
 
         comp.add_output('times', units='s', val=times)
+        comp.add_output('Initial_Data', val=np.zeros((1, )))
         self.add_subsystem('inputs_comp', comp, promotes=['*'])
 
         group = AttitudeGroup(
@@ -88,31 +90,42 @@ class CubesatGroup(Group):
 
         # name = cubesat['name']
         shape = (1, num_times)
-        rho = 20.
+        rho = 100.
 
         # cubesat_name = cubesat['name']
 
         comp = ElementwiseMaxComp(shape=shape,
                                   in_names=[
-                                      'UCSD_comm_group_Data',
-                                      'UIUC_comm_group_Data',
-                                      'Georgia_comm_group_Data',
-                                      'Montana_comm_group_Data',
+                                      'UCSD_comm_group_Download_rate',
+                                      'UIUC_comm_group_Download_rate',
+                                      'Georgia_comm_group_Download_rate',
+                                      'Montana_comm_group_Download_rate',
                                   ],
-                                  out_name='KS_Data',
+                                  out_name='KS_Download_rate',
                                   rho=rho)
-        self.add_subsystem('KS_Data_comp', comp, promotes=['*'])
+        self.add_subsystem('KS_Download_rate_comp', comp, promotes=['*'])
 
         for Ground_station in cubesat.children:
             Ground_station_name = Ground_station['name']
 
             self.connect(
-                '{}_comm_group.Data'.format(Ground_station_name),
-                '{}_comm_group_Data'.format(Ground_station_name),
+                '{}_comm_group.Download_rate'.format(Ground_station_name),
+                '{}_comm_group_Download_rate'.format(Ground_station_name),
             )
 
+            # self.connect(
+            #     '{}_comm_group.Download_rate'.format(Ground_station_name),
+            #     '{}_comm_group_Download_rate'.format(Ground_station_name),
+            # )
+
+        comp = DataDownloadComp(
+            num_times=num_times,
+            step_size=step_size,
+        )
+        self.add_subsystem('Data_download_rk4_comp', comp, promotes=['*'])
+
         comp = ExecComp(
-            'KS_total_Data = KS_Data[-1] - KS_Data[0]',
-            KS_Data=np.empty(num_times),
+            'total_Data = Data[-1] - Data[0]',
+            Data=np.empty(num_times),
         )
         self.add_subsystem('KS_total_Data_comp', comp, promotes=['*'])

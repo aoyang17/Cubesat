@@ -8,5 +8,5 @@ class Swarm(OptionsDictionary):
         self.declare('num_cp', types=int)
         self.declare('step_size', types=float)
 
-        self.declare('cross_threshold', default=0.94, types=float)
+        self.declare('cross_threshold', default=-0.87, types=float)
         self.declare('launch_date', default=0., types=float)

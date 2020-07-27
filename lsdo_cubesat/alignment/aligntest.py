@@ -1,6 +1,6 @@
 import numpy as np
 
-from openmdao.api import Group, IndepVarComp
+from openmdao.api import Group, IndepVarComp, DotProductComp
 
 from lsdo_utils.api import CrossProductComp, LinearCombinationComp, PowerCombinationComp, ScalarContractionComp
 
@@ -10,7 +10,6 @@ from lsdo_cubesat.utils.ks_comp import KSComp
 from lsdo_cubesat.orbit.constant_orbit_group import ConstantOrbitGroup
 from lsdo_cubesat.alignment.sun_direction_comp import SunDirectionComp
 from lsdo_cubesat.alignment.mask_vec_comp import MaskVecComp
-from lsdo_cubesat.utils.dot_product_comp import DotProductComp
 
 
 class AlignmentGroup(Group):
@@ -47,16 +46,6 @@ class AlignmentGroup(Group):
         #     cubesat=swarm.children[0],
         # )
         # self.add_subsystem('constant_orbit_group', group, promotes=['*'])
-        comp = CrossProductComp(
-            shape_no_3=(num_times, ),
-            out_index=0,
-            in1_index=0,
-            in2_index=0,
-            out_name='normal_cross_vec',
-            in1_name='velocity_unit_vec',
-            in2_name='position_unit_vec',
-        )
-        self.add_subsystem('normal_cross_vec_comp', comp, promotes=['*'])
 
         comp = CrossProductComp(
             shape_no_3=(num_times, ),
@@ -68,6 +57,17 @@ class AlignmentGroup(Group):
             in2_name='sun_unit_vec',
         )
         self.add_subsystem('observation_cross_vec_comp', comp, promotes=['*'])
+
+        comp = CrossProductComp(
+            shape_no_3=(num_times, ),
+            out_index=0,
+            in1_index=0,
+            in2_index=0,
+            out_name='normal_cross_vec',
+            in1_name='position_unit_vec',
+            in2_name='velocity_unit_vec',
+        )
+        self.add_subsystem('normal_cross_vec_comp', comp, promotes=['*'])
 
         group = DecomposeVectorGroup(
             num_times=num_times,

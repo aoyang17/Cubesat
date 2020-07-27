@@ -17,7 +17,7 @@ class DataDownloadComp(RK4Comp):
         n = opts['num_times']
         h = opts['step_size']
 
-        self.add_input('Download_rate',
+        self.add_input('KS_Download_rate',
                        np.zeros((1, n)),
                        desc='Data download rate over time')
 
@@ -32,7 +32,7 @@ class DataDownloadComp(RK4Comp):
 
         self.options['state_var'] = 'Data'
         self.options['init_state_var'] = 'Initial_Data'
-        self.options['external_vars'] = ['Download_rate']
+        self.options['external_vars'] = ['KS_Download_rate']
 
         self.dfdy = np.array([[0.]])
         self.dfdx = np.array([[1.]])

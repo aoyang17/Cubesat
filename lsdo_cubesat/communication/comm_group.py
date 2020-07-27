@@ -55,9 +55,10 @@ class CommGroup(Group):
         comp.add_output('alt', val=Ground_station['alt'], units='km')
 
         comp.add_output('comm_times', units='s', val=comm_times)
-        comp.add_output('antAngle', val=10.0, units='rad')
-        comp.add_design_var('antAngle', lower=0., upper=10000)
+        comp.add_output('antAngle', val=1.6, units='rad')
+        # comp.add_design_var('antAngle', lower=0., upper=10000)
         comp.add_output('P_comm_cp', val=13.0 * np.ones(num_cp), units='W')
+        comp.add_design_var('P_comm_cp', lower=0., upper=20.0)
         comp.add_output('gain', val=16.0 * np.ones(num_times))
         comp.add_output('Initial_Data', val=0.0)
 
@@ -108,14 +109,14 @@ class CommGroup(Group):
         comp = BitRateComp(num_times=num_times)
         self.add_subsystem('Download_rate', comp, promotes=['*'])
 
-        comp = DataDownloadComp(
-            num_times=num_times,
-            step_size=step_size,
-        )
-        self.add_subsystem('Data_download_rk4_comp', comp, promotes=['*'])
+        # comp = DataDownloadComp(
+        #     num_times=num_times,
+        #     step_size=step_size,
+        # )
+        # self.add_subsystem('Data_download_rk4_comp', comp, promotes=['*'])
 
-        comp = ExecComp(
-            'total_data_downloaded= Data[-1] - Data[0]',
-            Data=np.empty(num_times),
-        )
-        self.add_subsystem('total_data_downloaded_comp', comp, promotes=['*'])
+        # comp = ExecComp(
+        #     'total_data_downloaded= Data[-1] - Data[0]',
+        #     Data=np.empty(num_times),
+        # )
+        # self.add_subsystem('total_data_downloaded_comp', comp, promotes=['*'])

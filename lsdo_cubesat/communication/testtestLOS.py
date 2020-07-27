@@ -11,11 +11,11 @@ from lsdo_cubesat.utils.utils import get_array_indices
 
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return 1 / (1 + np.exp(x))
 
 
 def sigmoid_grad(x):
-    return np.exp(x) / (np.exp(x) + 1)**2
+    return 1 / (np.exp(x) + 1)**2
 
 
 class CommLOSComp(ExplicitComponent):
@@ -73,19 +73,24 @@ class CommLOSComp(ExplicitComponent):
         r_b2g_I = inputs['r_b2g_I']
         r_e2g_I = inputs['r_e2g_I']
 
-        Rb = 100.0
+        Rb = 7e4
         proj = np.sum(r_b2g_I * r_e2g_I, axis=0) / self.Re
 
-        np.savetxt("rundata/optics_r_b2g_I.csv", r_b2g_I, header="r_b2g_I")
+        # np.savetxt("rundata/optics_r_b2g_I.csv", r_b2g_I, header="r_b2g_I")
 
-        np.savetxt("rundata/optics_r_e2g_I.csv", r_e2g_I, header="r_e2g_I")
+        # np.savetxt("rundata/optics_r_e2g_I.csv", r_e2g_I, header="r_e2g_I")
 
-        np.savetxt("rundata/projection.csv",
-                   proj,
-                   header="proj",
-                   delimiter=',')
+        # np.savetxt("rundata/projection.csv",
+        #            proj,
+        #            header="proj",
+        #            delimiter=',')
 
-        outputs['CommLOS'] = sigmoid(proj + Rb)
+        outputs['CommLOS'] = sigmoid(proj - Rb)
+        # CommLOS = outputs['CommLOS']
+        # np.savetxt("rundata/CommLOS.csv",
+        #            CommLOS,
+        #            header="CommLOS",
+        #            delimiter=',')
         # print(outputs['CommLOS'])
 
     def compute_partials(self, inputs, partials):
@@ -95,10 +100,10 @@ class CommLOSComp(ExplicitComponent):
         r_b2g_I = inputs['r_b2g_I']
         r_e2g_I = inputs['r_e2g_I']
 
-        Rb = 100.0
+        Rb = 7e4
         proj = np.sum(r_b2g_I * r_e2g_I, axis=0) / self.Re
 
-        grad_proj = sigmoid_grad(proj + Rb)
+        grad_proj = sigmoid_grad(proj - Rb)
 
         dLOS_drb = partials['CommLOS', 'r_b2g_I'].reshape(3, num_times)
         dLOS_dre = partials['CommLOS', 'r_e2g_I'].reshape(3, num_times)

@@ -79,3 +79,13 @@ class ConstantOrbitGroup(Group):
         self.add_subsystem('position_decomposition_group',
                            group,
                            promotes=['*'])
+
+        group = DecomposeVectorGroup(
+            num_times=num_times,
+            vec_name='velocity_km_s',
+            norm_name='speed_km_s',
+            unit_vec_name='velocity_unit_vec',
+        )
+        self.add_subsystem('velocity_decomposition_group',
+                           group,
+                           promotes=['*'])

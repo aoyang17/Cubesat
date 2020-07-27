@@ -59,16 +59,13 @@ class SwarmGroup(Group):
         self.add_subsystem('total_propellant_used_comp', comp, promotes=['*'])
 
         comp = ExecComp(
-            'total_KS_data_downloaded' +
-            '=sunshade_cubesat_group_KS_total_Data' +
-            '+optics_cubesat_group_KS_total_Data' +
-            '+detector_cubesat_group_KS_total_Data'
+            'total_data_downloaded' + '=sunshade_cubesat_group_total_Data' +
+            '+optics_cubesat_group_total_Data' +
+            '+detector_cubesat_group_total_Data'
             # '+5.e-14*ks_masked_distance_sunshade_optics_km' +
             # '+5.e-14 *ks_masked_distance_optics_detector_km'
         )
-        self.add_subsystem('total_KS_data_downloaded_comp',
-                           comp,
-                           promotes=['*'])
+        self.add_subsystem('total_data_downloaded_comp', comp, promotes=['*'])
 
         for cubesat in swarm.children:
             name = cubesat['name']
@@ -84,8 +81,8 @@ class SwarmGroup(Group):
             )
 
             self.connect(
-                '{}_cubesat_group.KS_total_Data'.format(name),
-                '{}_cubesat_group_KS_total_Data'.format(name),
+                '{}_cubesat_group.total_Data'.format(name),
+                '{}_cubesat_group_total_Data'.format(name),
             )
 
             for var_name in [
@@ -111,15 +108,3 @@ class SwarmGroup(Group):
                 # self.connect(
                 #     'times', '{}_cubesat_group.attitude_group.times'.format(
                 #         cubesat_name))
-
-        # for cubesat in swarm.children:
-        #     cubesat_name = cubesat['name']
-        #     for Ground_station in cubesat.children:
-        #         Ground_station_name = Ground_station['name']
-
-        #         self.connect(
-        #             '{}_cubesat_group_{}_comm_group_Data'.format(
-        #                 cubesat_name, Ground_station_name),
-        #             '{}_cubesat_group.{}_comm_group.Data_download_rk4_comp.Data'
-        #             .format(cubesat_name, Ground_station_name),
-        #         )
